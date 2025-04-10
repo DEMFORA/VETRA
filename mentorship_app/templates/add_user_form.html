@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Yeni Kullanıcı Ekle</title>
+</head>
+<body>
+    <h1>Yeni Kullanıcı Ekle</h1>
+    <form action="/submit-user" method="POST">
+        <!-- İsim Alanı -->
+        <label>İsim:</label>
+        <input type="text" name="first_name" required><br><br>
+
+        <!-- Soyisim Alanı (opsiyonel, ekleyebilirsiniz) -->
+        <label>Soyisim:</label>
+        <input type="text" name="last_name" required><br><br>
+
+        <!-- E-posta Alanı -->
+        <label>Email:</label>
+        <input type="email" name="email" required novalidate><br><br>
+        <p style="color: red; font-size: 0.9em;">
+            Lütfen e-posta adresinizi girerken yalnızca geçerli karakterler kullanınız. 
+            Örneğin, "ı", "ğ", "ö", "ü" gibi Türkçe karakterler e-posta adresinde kullanılamaz.
+        </p>
+        <br>
+
+        <!-- Meslek / Pozisyon Alanı -->
+        <label>Meslek/Pozisyon:</label>
+        <input type="text" name="occupation" required><br><br>
+
+        <!-- Uzmanlık Alanları Alanı -->
+        <label>Uzmanlık Alanları:</label>
+        <input type="text" name="skills" placeholder="örn: Python, Veri Bilimi" required><br><br>
+
+        <!-- Rol Seçimi -->
+        <label>Rol:</label>
+        <select name="role" required>
+            <option value="mentor">Mentor</option>
+            <option value="mentee">Mentee</option>
+        </select><br><br>
+
+        <button type="submit">Ekle</button>
+    </form>
+
+    <p><a href="/">Anasayfa</a></p>
+</body>
+</html>

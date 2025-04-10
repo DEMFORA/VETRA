@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Kullanıcı Listesi</title>
+</head>
+<body>
+    <h1>Kullanıcı Listesi</h1>
+    <ul>
+        {% for user in users %}
+        <li>
+            <strong>ID:</strong> {{ user.id }} |
+            <strong>Ad:</strong> {{ user.first_name }} |
+            <strong>Soyad:</strong> {{ user.last_name }} |
+            <strong>Email:</strong> {{ user.email }} |
+            <strong>Meslek:</strong> {{ user.occupation }} |
+            <strong>Uzmanlık:</strong> {{ user.skills }} |
+            <strong>Rol:</strong> {{ user.role }}
+
+            <!-- Sil Butonu -->
+            <button onclick="deleteUser({{ user.id }})">Sil</button>
+
+            <!-- Form Tabanlı Güncelleme Linki -->
+            <a href="/edit-user/{{ user.id }}">Güncelle</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <p><a href="/">Anasayfa</a> | <a href="/add-user-form">Yeni Kullanıcı Ekle</a></p>
+
+    <script>
+    function deleteUser(userId) {
+        fetch(`/users/${userId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.reload();
+        })
+        .catch(err => console.error(err));
+    }
+    </script>
+</body>
+</html>
