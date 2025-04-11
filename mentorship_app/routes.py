@@ -4,15 +4,14 @@ from database import get_db_connection
 app = Flask(__name__)
 
 # --------------------------------------------------------------------
-# ANASAYFA ROTASI
+# ANASAYFA
 # --------------------------------------------------------------------
 @app.route("/")
 def home_page():
-    # index.html dosyasını render eder.
     return render_template("index.html")
 
 # --------------------------------------------------------------------
-# 1) Tüm Kullanıcıları Listele (JSON formatında)
+# TÜM KULLANICILARI LİSTELE (JSON)
 # --------------------------------------------------------------------
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -22,10 +21,8 @@ def get_users():
     rows = cursor.fetchall()
     conn.close()
 
-    users = []
-    # Her kullanıcı için genişletilmiş alanları JSON olarak ekler.
-    for row in rows:
-        users.append({
+    users = [
+        {
             'id': row['id'],
             'first_name': row['first_name'],
             'last_name': row['last_name'],
@@ -33,43 +30,44 @@ def get_users():
             'occupation': row['occupation'],
             'skills': row['skills'],
             'role': row['role']
-        })
+        } for row in rows
+    ]
     return jsonify(users)
 
 # --------------------------------------------------------------------
-# 2) Yeni Bir Kullanıcı Ekle (JSON body ile)
+# YENİ KULLANICI EKLE (JSON)
 # --------------------------------------------------------------------
 @app.route('/users', methods=['POST'])
 def add_user():
-    data = request.json  # JSON formatında gelen veriler
+    data = request.json
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO users (first_name, last_name, email, occupation, skills, role) VALUES (?, ?, ?, ?, ?, ?)",
         (data['first_name'], data['last_name'], data['email'], data['occupation'], data['skills'], data['role'])
     )
-    conn.commit()   # Değişiklikleri kaydeder
-    conn.close()    # Bağlantıyı kapatır
+    conn.commit()
+    conn.close()
     return jsonify({'message': 'User added successfully!'}), 201
 
 # --------------------------------------------------------------------
-# 3) Kullanıcıyı Güncelle (JSON body ile)
+# KULLANICI GÜNCELLE (JSON)
 # --------------------------------------------------------------------
 @app.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
-    data = request.json  # JSON formatında gelen güncelleme verileri
+    data = request.json
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
         "UPDATE users SET first_name=?, last_name=?, email=?, occupation=?, skills=?, role=? WHERE id=?",
         (data['first_name'], data['last_name'], data['email'], data['occupation'], data['skills'], data['role'], user_id)
     )
-    conn.commit()   # Değişiklikleri kaydeder
-    conn.close()    # Bağlantıyı kapatır
+    conn.commit()
+    conn.close()
     return jsonify({'message': 'User updated successfully!'})
 
 # --------------------------------------------------------------------
-# 4) Kullanıcıyı Sil (JSON)
+# KULLANICI SİL (JSON)
 # --------------------------------------------------------------------
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
@@ -81,7 +79,7 @@ def delete_user(user_id):
     return jsonify({'message': 'User deleted successfully!'})
 
 # --------------------------------------------------------------------
-# 5) Kullanıcıları HTML'de Listeleme (Listelerken genişletilmiş alanları gösterir)
+# TÜM KULLANICILARI HTML'DE GÖSTER
 # --------------------------------------------------------------------
 @app.route("/list-users", methods=["GET"])
 def list_users_html():
@@ -91,9 +89,8 @@ def list_users_html():
     rows = cursor.fetchall()
     conn.close()
 
-    users = []
-    for row in rows:
-        users.append({
+    users = [
+        {
             'id': row['id'],
             'first_name': row['first_name'],
             'last_name': row['last_name'],
@@ -101,24 +98,19 @@ def list_users_html():
             'occupation': row['occupation'],
             'skills': row['skills'],
             'role': row['role']
-        })
-    # list_users.html şablonuna, kullanıcı listesini "users" olarak gönderir.
+        } for row in rows
+    ]
     return render_template("list_users.html", users=users)
 
 # --------------------------------------------------------------------
-# 6) HTML Formu Gösterme (GET) - Yeni Kullanıcı Ekleme Formunu gösterir
+# KULLANICI EKLEME FORMU (HTML)
 # --------------------------------------------------------------------
 @app.route("/add-user-form", methods=["GET"])
 def add_user_form():
     return render_template("add_user_form.html")
 
-# --------------------------------------------------------------------
-# 7) HTML Formunu İşleme (POST) - Kullanıcı ekleme formundan gelen verileri işler
-# --------------------------------------------------------------------
 @app.route("/submit-user", methods=["POST"])
 def submit_user():
-    print("Formdan gelen veriler:", request.form)  # Formdan gelen verileri konsola yazdırır.
-    # Form verilerinden genişletilmiş alanları alır.
     first_name = request.form.get("first_name")
     last_name = request.form.get("last_name")
     email = request.form.get("email")
@@ -126,7 +118,6 @@ def submit_user():
     skills = request.form.get("skills")
     role = request.form.get("role")
 
-    print(first_name, last_name, email, occupation, skills, role)  # Formdan gelen verileri konsola yazdırır.
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
@@ -139,7 +130,7 @@ def submit_user():
     return "Kullanıcı başarıyla eklendi! <a href='/list-users'>Listele</a>"
 
 # --------------------------------------------------------------------
-# 8) Kullanıcı Bilgilerini Düzenlemek için Formu Gösteren Rota (GET)
+# KULLANICI DÜZENLEME FORMU (HTML)
 # --------------------------------------------------------------------
 @app.route("/edit-user/<int:user_id>", methods=["GET"])
 def edit_user_form(user_id):
@@ -151,12 +142,8 @@ def edit_user_form(user_id):
 
     if row is None:
         return "Kullanıcı bulunamadı!", 404
-
     return render_template("edit_user.html", user=row)
 
-# --------------------------------------------------------------------
-# 9) Düzenleme Formundan Gelen Verileri İşleyen Rota (POST)
-# --------------------------------------------------------------------
 @app.route("/edit-user/<int:user_id>", methods=["POST"])
 def edit_user_submit(user_id):
     first_name = request.form.get("first_name")
@@ -165,7 +152,7 @@ def edit_user_submit(user_id):
     occupation = request.form.get("occupation")
     skills = request.form.get("skills")
     role = request.form.get("role")
-    print(first_name, last_name, email, occupation, skills, role) 
+
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -180,7 +167,52 @@ def edit_user_submit(user_id):
     return "Kullanıcı başarıyla güncellendi! <a href='/list-users'>Listeye dön</a>"
 
 # --------------------------------------------------------------------
-# Flask Uygulamasını Başlatma
+# MENTÖR-MENTEE EŞLEŞME ROTASI
+# --------------------------------------------------------------------
+@app.route("/match-users", methods=["GET"])
+def match_users():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM users WHERE role='mentor'")
+    mentors = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM users WHERE role='mentee'")
+    mentees = cursor.fetchall()
+    conn.close()
+
+    matches = []
+
+    for mentee in mentees:
+        mentee_skills = set(map(str.strip, mentee['skills'].lower().split(',')))
+        mentor_scores = []
+
+        for mentor in mentors:
+            mentor_skills = set(map(str.strip, mentor['skills'].lower().split(',')))
+            score = len(mentee_skills & mentor_skills)
+
+            if score > 0:
+                mentor_scores.append({
+                    'mentor': mentor,
+                    'score': score
+                })
+
+        # Puanı 0'dan büyük olanları sırala ve ilk 3'ü al
+        mentor_scores.sort(key=lambda x: x['score'], reverse=True)
+        top_matches = mentor_scores[:3]
+
+        matches.append({
+            'mentee': mentee,
+            'mentors': top_matches
+        })
+
+
+    # 🎯 Return ifadesi dışarıda olmalı
+    return render_template("match_results.html", matches=matches)
+
+        
+# --------------------------------------------------------------------
+# UYGULAMA BAŞLATMA
 # --------------------------------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)

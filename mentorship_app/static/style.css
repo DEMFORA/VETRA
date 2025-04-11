@@ -7,7 +7,7 @@ body {
     color: #333;
 }
 
-h1 {
+h1, h2 {
     color: #4CAF50;
     text-align: center;
     margin-top: 20px;
@@ -52,7 +52,9 @@ form label {
     font-weight: bold;
 }
 
-form input, form select, form button {
+form input,
+form select,
+form button {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -71,40 +73,32 @@ form button:hover {
     background-color: #45a049;
 }
 
-/* User List Styles */
-ul {
-    list-style-type: none;
-    padding: 0;
-    max-width: 600px;
-    margin: 20px auto;
-    background-color: white;
+/* User Card Styles */
+.user-card {
     border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin: 15px auto;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 600px;
 }
 
-ul li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-ul li:last-child {
-    border-bottom: none;
-}
-
-ul li strong {
+.user-card strong {
+    display: inline-block;
+    min-width: 90px;
     color: #4CAF50;
 }
 
-button {
-    margin-left: 10px;
-    padding: 5px 10px;
+.user-card button {
+    margin-top: 10px;
+    padding: 6px 12px;
     border: none;
     border-radius: 3px;
     cursor: pointer;
 }
 
-button:hover {
+.user-card button:hover {
     opacity: 0.9;
 }
 
@@ -116,4 +110,31 @@ button[onclick^="deleteUser"] {
 button[onclick^="updateUser"] {
     background-color: #2196F3;
     color: white;
+}
+
+/* 🔹 Match Button Style */
+.match-button {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    margin-left: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.match-button:hover {
+    background-color: #45a049;
+}
+
+/* 🔸 Match Results Cards */
+.user-card h3,
+.user-card h4 {
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.user-card p {
+    margin: 4px 0;
 }

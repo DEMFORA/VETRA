@@ -1,33 +1,60 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <link rel="stylesheet" href="/static/style.css">
     <meta charset="UTF-8">
     <title>Kullanıcı Listesi</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h1>Kullanıcı Listesi</h1>
+
+    <!-- MENTÖRLER -->
+    <h2>Mentörler</h2>
+    {% if users|selectattr('role', 'equalto', 'mentor')|list %}
     <ul>
-        {% for user in users %}
-        <li>
-            <strong>ID:</strong> {{ user.id }} |
-            <strong>Ad:</strong> {{ user.first_name }} |
-            <strong>Soyad:</strong> {{ user.last_name }} |
-            <strong>Email:</strong> {{ user.email }} |
-            <strong>Meslek:</strong> {{ user.occupation }} |
-            <strong>Uzmanlık:</strong> {{ user.skills }} |
-            <strong>Rol:</strong> {{ user.role }}
+        {% for user in users if user.role == 'mentor' %}
+        <li class="user-card">
+            <strong>ID:</strong> {{ user.id }}<br>
+            <strong>Ad:</strong> {{ user.first_name }}<br>
+            <strong>Soyad:</strong> {{ user.last_name }}<br>
+            <strong>Email:</strong> {{ user.email }}<br>
+            <strong>Meslek:</strong> {{ user.occupation }}<br>
+            <strong>Mentörlük Alanı:</strong> {{ user.skills }}<br>
 
-            <!-- Sil Butonu -->
             <button onclick="deleteUser({{ user.id }})">Sil</button>
-
-            <!-- Form Tabanlı Güncelleme Linki -->
-            <a href="/edit-user/{{ user.id }}">Güncelle</a>
+            <a href="/edit-user/{{ user.id }}"><button>Güncelle</button></a>
         </li>
         {% endfor %}
     </ul>
+    {% else %}
+    <p>Henüz kayıtlı mentör bulunmamaktadır.</p>
+    {% endif %}
 
-    <p><a href="/">Anasayfa</a> | <a href="/add-user-form">Yeni Kullanıcı Ekle</a></p>
+    <!-- MENTEELER -->
+    <h2>Menteeler</h2>
+    {% if users|selectattr('role', 'equalto', 'mentee')|list %}
+    <ul>
+        {% for user in users if user.role == 'mentee' %}
+        <li class="user-card">
+            <strong>ID:</strong> {{ user.id }}<br>
+            <strong>Ad:</strong> {{ user.first_name }}<br>
+            <strong>Soyad:</strong> {{ user.last_name }}<br>
+            <strong>Email:</strong> {{ user.email }}<br>
+            <strong>Meslek:</strong> {{ user.occupation }}<br>
+            <strong>Menteelik Alanı:</strong> {{ user.skills }}<br>
+
+            <button onclick="deleteUser({{ user.id }})">Sil</button>
+            <a href="/edit-user/{{ user.id }}"><button>Güncelle</button></a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Henüz kayıtlı mentee bulunmamaktadır.</p>
+    {% endif %}
+
+    <p style="text-align: center; margin-top: 20px;">
+        <a href="/">Anasayfa</a> | <a href="/add-user-form">Yeni Kullanıcı Ekle</a>
+    </p>
 
     <script>
     function deleteUser(userId) {
