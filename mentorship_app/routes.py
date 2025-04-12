@@ -1,7 +1,16 @@
 from flask import Flask, jsonify, request, render_template
+import sqlite3
 from database import get_db_connection
 
 app = Flask(__name__)
+
+PROFESSION_TOPICS = {
+    "Yazılım Mühendisi": ["Python", "java", "c++", "javascript", "flask" ],
+    "Tıp Doktoru": ["anatomi", "fizyoloji", "kardiyoloji", "biyoloji"],
+    "Mimar": ["autocad", "tasarım", "sketchup"],
+    "Makine Mühendisi": ["solidworks", "termodinamik", "cad", "cam"],
+    "Edebiyatçı": ["şiir", "roman", "yaratıcı yazarlık", "edebiyat", "editörlük"]
+}
 
 # --------------------------------------------------------------------
 # ANASAYFA
@@ -176,6 +185,7 @@ def edit_user_submit(user_id):
 @app.route("/match-users", methods=["GET"])
 def match_users():
     conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM users WHERE role='mentor'")
@@ -183,17 +193,29 @@ def match_users():
 
     cursor.execute("SELECT * FROM users WHERE role='mentee'")
     mentees = cursor.fetchall()
-    conn.close()
 
-    matches = []
+    expertise_score = 3
+    profession_score = 1
+    match_results = []
 
     for mentee in mentees:
-        mentee_skills = set(map(str.strip, mentee['skills'].lower().split(',')))
+        mentee_interests = set(map(str.strip, mentee['skills'].lower().split(',')))
         mentor_scores = []
 
         for mentor in mentors:
+            score = 0
+
             mentor_skills = set(map(str.strip, mentor['skills'].lower().split(',')))
-            score = len(mentee_skills & mentor_skills)
+            mentor_profession_topics = set(map(str.lower, PROFESSION_TOPICS.get(mentor['occupation'], [])))
+
+            # 1. Uzmanlık (skills) puanı: her eşleşme 3 puan
+            for interest in mentee_interests:
+                if interest in mentor_skills:
+                    score += expertise_score
+
+            # 2. Mesleki başlıklar puanı: sadece 1 kez +1 puan
+            if mentee_interests & mentor_profession_topics:
+                score += profession_score
 
             if score > 0:
                 mentor_scores.append({
@@ -201,15 +223,70 @@ def match_users():
                     'score': score
                 })
 
-        # İlk 3 benzer mentoru getir
         mentor_scores.sort(key=lambda x: x['score'], reverse=True)
         top_matches = mentor_scores[:3]
 
-        matches.append({
+        # Seçilen mentör varsa, onun bilgilerini bul
+        selected_mentor = None
+        if mentee['selectedMentId']:
+            selected_mentor = next((m for m in mentors if m['id'] == mentee['selectedMentId']), None)
+
+        match_results.append({
             'mentee': mentee,
-            'mentors': top_matches
+            'mentors': top_matches,
+            'selectedMentId': mentee['selectedMentId'],
+            'selected_mentor': selected_mentor
         })
 
+    conn.close()
+    return render_template("match_results.html", matches=match_results)
+
+# --------------------------------------------------------------------
+# MENTEÖR EKLE
+# --------------------------------------------------------------------
+@app.route("/assign-mentor", methods=["POST"])
+def assign_mentor():
+    data = request.json
+    mentee_id = data.get("mentee_id")
+    mentor_id = data.get("mentor_id")
+
+    if not mentee_id or not mentor_id:
+        return jsonify({"error": "Eksik veri gönderildi."}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("UPDATE users SET selectedMentId = ? WHERE id = ? AND role = 'mentee'", (mentor_id, mentee_id))
+        conn.commit()
+        return jsonify({"message": "Mentör başarıyla atandı!"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+# --------------------------------------------------------------------
+# MENTEÖR KALDIR
+# --------------------------------------------------------------------
+@app.route("/remove-mentor", methods=["POST"])
+def remove_mentor():
+    data = request.json
+    mentee_id = data.get("mentee_id")
+
+    if not mentee_id:
+        return jsonify({"error": "Mentee ID eksik"}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("UPDATE users SET selectedMentId = NULL WHERE id = ? AND role = 'mentee'", (mentee_id,))
+        conn.commit()
+        return jsonify({"message": "Mentör kaldırıldı."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
     return render_template("match_results.html", matches=matches)
 
 # --------------------------------------------------------------------
