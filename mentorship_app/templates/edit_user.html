@@ -3,10 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Kullanıcı Güncelle</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Rol seçimine göre "skills" alanının etiketini değiştiren JS -->
+    <script>
+        function toggleSkillLabel() {
+            const role = document.getElementById("role").value;
+            const label = document.getElementById("skills-label");
+
+            if (role === "mentor") {
+                label.textContent = "Uzmanlık Alanı:";
+            } else {
+                label.textContent = "Deneyim Almak İstediği Alan:";
+            }
+        }
+
+        window.onload = toggleSkillLabel; // Sayfa yüklendiğinde doğru etiketi göster
+    </script>
 </head>
 <body>
     <h1>Kullanıcı Bilgilerini Güncelle</h1>
-    <!-- Önemli: action="/edit-user/{{ user.id }}" => güncelleme isteği POST ile -->
+
     <form action="/edit-user/{{ user.id }}" method="POST">
         <label>İsim:</label>
         <input type="text" name="first_name" value="{{ user.first_name }}" required><br><br>
@@ -17,11 +34,21 @@
         <label>Email:</label>
         <input type="email" name="email" value="{{ user.email }}" required><br><br>
 
-        <label>Uzmanlık Alanı:</label>
+        <label>Meslek/Pozisyon:</label>
+        <input type="text" name="occupation" value="{{ user.occupation }}" required><br><br>
+
+        <!-- Rol seçimine göre başlık değişecek -->
+        <label id="skills-label">
+            {% if user.role == 'mentor' %}
+                Uzmanlık Alanı:
+            {% else %}
+                Deneyim Almak İstediği Alan:
+            {% endif %}
+        </label>
         <input type="text" name="skills" value="{{ user.skills }}" required><br><br>
 
         <label>Rol:</label>
-        <select name="role" required>
+        <select name="role" id="role" onchange="toggleSkillLabel()" required>
             <option value="mentor" {% if user.role == 'mentor' %}selected{% endif %}>Mentor</option>
             <option value="mentee" {% if user.role == 'mentee' %}selected{% endif %}>Mentee</option>
         </select><br><br>

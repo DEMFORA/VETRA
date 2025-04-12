@@ -39,9 +39,10 @@
             <li>
                 <strong>{{ mentor_match.mentor['first_name'] }} {{
                     mentor_match.mentor['last_name'] }}</strong><br />
-                <strong>Mentörlük Alanı:</strong> {{ mentor_match.mentor['skills'] }}<br />
-                <strong>Mentörlük Mesleği:</strong> {{ mentor_match.mentor['occupation']
+                <strong>Mentörlük Alanı:</strong> {{ mentor_match.mentor['skills']
                 }}<br />
+                <strong>Mentörlük Mesleği:</strong> {{
+                mentor_match.mentor['occupation'] }}<br />
                 <strong>Benzerlik Puanı:</strong> {{ mentor_match.score }}
                 <br />
                 <button onclick="assignMentor({{ match.mentee.id }}, {{ mentor_match.mentor['id'] }})">
