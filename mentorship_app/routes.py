@@ -21,6 +21,7 @@ def get_users():
     rows = cursor.fetchall()
     conn.close()
 
+    # Kullanıcıları JSON formatına çeviriyoruz
     users = [
         {
             'id': row['id'],
@@ -35,7 +36,7 @@ def get_users():
     return jsonify(users)
 
 # --------------------------------------------------------------------
-# YENİ KULLANICI EKLE (JSON)
+# YENİ KULLANICI EKLE (JSON API)
 # --------------------------------------------------------------------
 @app.route('/users', methods=['POST'])
 def add_user():
@@ -51,7 +52,7 @@ def add_user():
     return jsonify({'message': 'User added successfully!'}), 201
 
 # --------------------------------------------------------------------
-# KULLANICI GÜNCELLE (JSON)
+# KULLANICI GÜNCELLE (JSON API)
 # --------------------------------------------------------------------
 @app.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
@@ -67,7 +68,7 @@ def update_user(user_id):
     return jsonify({'message': 'User updated successfully!'})
 
 # --------------------------------------------------------------------
-# KULLANICI SİL (JSON)
+# KULLANICI SİL (JSON API)
 # --------------------------------------------------------------------
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
@@ -89,6 +90,7 @@ def list_users_html():
     rows = cursor.fetchall()
     conn.close()
 
+    # HTML için kullanıcı listesini gönderiyoruz
     users = [
         {
             'id': row['id'],
@@ -109,6 +111,7 @@ def list_users_html():
 def add_user_form():
     return render_template("add_user_form.html")
 
+# HTML formdan kullanıcı ekleme işlemi
 @app.route("/submit-user", methods=["POST"])
 def submit_user():
     first_name = request.form.get("first_name")
@@ -144,6 +147,7 @@ def edit_user_form(user_id):
         return "Kullanıcı bulunamadı!", 404
     return render_template("edit_user.html", user=row)
 
+# Güncellemeyi işleyen rota
 @app.route("/edit-user/<int:user_id>", methods=["POST"])
 def edit_user_submit(user_id):
     first_name = request.form.get("first_name")
@@ -197,7 +201,7 @@ def match_users():
                     'score': score
                 })
 
-        # Puanı 0'dan büyük olanları sırala ve ilk 3'ü al
+        # İlk 3 benzer mentoru getir
         mentor_scores.sort(key=lambda x: x['score'], reverse=True)
         top_matches = mentor_scores[:3]
 
@@ -206,13 +210,10 @@ def match_users():
             'mentors': top_matches
         })
 
-
-    # 🎯 Return ifadesi dışarıda olmalı
     return render_template("match_results.html", matches=matches)
 
-        
 # --------------------------------------------------------------------
-# UYGULAMA BAŞLATMA
+# UYGULAMA BAŞLAT
 # --------------------------------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)

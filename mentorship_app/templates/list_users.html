@@ -8,12 +8,13 @@
 <body>
     <h1>Kullanıcı Listesi</h1>
 
-    <!-- MENTÖRLER -->
+    <!-- 🔹 MENTÖRLER -->
     <h2>Mentörler</h2>
     {% if users|selectattr('role', 'equalto', 'mentor')|list %}
     <ul>
         {% for user in users if user.role == 'mentor' %}
         <li class="user-card">
+            <!-- Kullanıcının bilgileri -->
             <strong>ID:</strong> {{ user.id }}<br>
             <strong>Ad:</strong> {{ user.first_name }}<br>
             <strong>Soyad:</strong> {{ user.last_name }}<br>
@@ -21,6 +22,7 @@
             <strong>Meslek:</strong> {{ user.occupation }}<br>
             <strong>Mentörlük Alanı:</strong> {{ user.skills }}<br>
 
+            <!-- Silme ve Güncelleme butonları -->
             <button onclick="deleteUser({{ user.id }})">Sil</button>
             <a href="/edit-user/{{ user.id }}"><button>Güncelle</button></a>
         </li>
@@ -30,19 +32,21 @@
     <p>Henüz kayıtlı mentör bulunmamaktadır.</p>
     {% endif %}
 
-    <!-- MENTEELER -->
+    <!-- 🔸 MENTEELER -->
     <h2>Menteeler</h2>
     {% if users|selectattr('role', 'equalto', 'mentee')|list %}
     <ul>
         {% for user in users if user.role == 'mentee' %}
         <li class="user-card">
+            <!-- Kullanıcının bilgileri -->
             <strong>ID:</strong> {{ user.id }}<br>
             <strong>Ad:</strong> {{ user.first_name }}<br>
             <strong>Soyad:</strong> {{ user.last_name }}<br>
             <strong>Email:</strong> {{ user.email }}<br>
             <strong>Meslek:</strong> {{ user.occupation }}<br>
-            <strong>Menteelik Alanı:</strong> {{ user.skills }}<br>
+            <strong>Deneyim Almak İstediği Alan:</strong> {{ user.skills }}<br>
 
+            <!-- Silme ve Güncelleme butonları -->
             <button onclick="deleteUser({{ user.id }})">Sil</button>
             <a href="/edit-user/{{ user.id }}"><button>Güncelle</button></a>
         </li>
@@ -52,10 +56,12 @@
     <p>Henüz kayıtlı mentee bulunmamaktadır.</p>
     {% endif %}
 
+    <!-- 🔗 Sayfa Geçişleri -->
     <p style="text-align: center; margin-top: 20px;">
         <a href="/">Anasayfa</a> | <a href="/add-user-form">Yeni Kullanıcı Ekle</a>
     </p>
 
+    <!-- ❌ Kullanıcı Silme İşlemi -->
     <script>
     function deleteUser(userId) {
         fetch(`/users/${userId}`, {
@@ -63,8 +69,8 @@
         })
         .then(response => response.json())
         .then(data => {
-            alert(data.message);
-            window.location.reload();
+            alert(data.message); // Silme mesajını göster
+            window.location.reload(); // Sayfayı yenile
         })
         .catch(err => console.error(err));
     }

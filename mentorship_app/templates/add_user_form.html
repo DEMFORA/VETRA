@@ -12,7 +12,7 @@
         <label>İsim:</label>
         <input type="text" name="first_name" required><br><br>
 
-        <!-- Soyisim Alanı (opsiyonel, ekleyebilirsiniz) -->
+        <!-- Soyisim Alanı -->
         <label>Soyisim:</label>
         <input type="text" name="last_name" required><br><br>
 
@@ -22,27 +22,46 @@
         <p style="color: red; font-size: 0.9em;">
             Lütfen e-posta adresinizi girerken yalnızca geçerli karakterler kullanınız. 
             Örneğin, "ı", "ğ", "ö", "ü" gibi Türkçe karakterler e-posta adresinde kullanılamaz.
-        </p>
-        <br>
+        </p><br>
 
         <!-- Meslek / Pozisyon Alanı -->
         <label>Meslek/Pozisyon:</label>
         <input type="text" name="occupation" required><br><br>
 
-        <!-- Uzmanlık Alanları Alanı -->
-        <label>Uzmanlık Alanları:</label>
-        <input type="text" name="skills" placeholder="örn: Python, Veri Bilimi" required><br><br>
-
-        <!-- Rol Seçimi -->
+        <!-- ROL SEÇİMİ -->
         <label>Rol:</label>
-        <select name="role" required>
+        <select name="role" id="roleSelect" required onchange="toggleSkillsLabel()">
             <option value="mentor">Mentor</option>
             <option value="mentee">Mentee</option>
         </select><br><br>
+
+        <!-- DİNAMİK ALAN: Uzmanlık ya da Deneyim -->
+        <label id="skillsLabel">Uzmanlık Alanı:</label>
+        <input type="text" name="skills" id="skillsInput" placeholder="örn: Python, Veri Bilimi" required><br><br>
 
         <button type="submit">Ekle</button>
     </form>
 
     <p><a href="/">Anasayfa</a></p>
+
+    <!-- JavaScript ile dinamik label değiştirme -->
+    <script>
+    function toggleSkillsLabel() {
+        const role = document.getElementById("roleSelect").value;
+        const label = document.getElementById("skillsLabel");
+        const input = document.getElementById("skillsInput");
+
+        if (role === "mentor") {
+            label.innerText = "Uzmanlık Alanı:";
+            input.placeholder = "örn: Python, Veri Bilimi";
+        } else {
+            label.innerText = "Deneyim Almak İstediği Alan:";
+            input.placeholder = "örn: Web Geliştirme, Veri Analizi";
+        }
+    }
+
+    // Sayfa yüklendiğinde doğru label'ı göster
+    window.onload = toggleSkillsLabel;
+    </script>
 </body>
 </html>
