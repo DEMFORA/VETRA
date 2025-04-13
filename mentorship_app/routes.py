@@ -5,7 +5,7 @@ from database import get_db_connection
 app = Flask(__name__)
 
 PROFESSION_TOPICS = {
-    "Yazılım Mühendisi": ["Python", "java", "c++", "javascript", "flask" ],
+    "Yazılım Mühendisi": ["Python", "java", "c++", "javascript", "flask","veri analizi"],
     "Tıp Doktoru": ["anatomi", "fizyoloji", "kardiyoloji", "biyoloji"],
     "Mimar": ["autocad", "tasarım", "sketchup"],
     "Makine Mühendisi": ["solidworks", "termodinamik", "cad", "cam"],

@@ -1,105 +1,82 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
-
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eşleşme Sonuçları</title>
+
+    <!-- Google Fonts: Open Sans (metin) + Poppins (başlıklar) -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    
+    <!-- CSS Dosyan -->
     <link rel="stylesheet" href="/static/style.css" />
 </head>
 
 <body>
     <h1>Mentör-Mentee Eşleşme Sonuçları</h1>
 
-    {% if matches %} {% for match in matches %}
-    <div class="user-card">
-        <strong>Mentee:</strong> {{ match.mentee.first_name }} {{
-        match.mentee.last_name }}<br />
-        <strong>Menteelik Alanı:</strong> {{ match.mentee.skills }}<br /><br />
+    {% if matches %}
+        {% for match in matches %}
+        <div class="user-card">
+            <h3>{{ match.mentee.first_name }} {{ match.mentee.last_name }}</h3>
+            <p><strong>Deneyim Almak İstediği Alan:</strong> {{ match.mentee.skills }}</p>
 
-        {% if match.selected_mentor %}
-        <p><strong>Seçilen Mentör:</strong></p>
-        <ul>
-            <li>
-                <strong>{{ match.selected_mentor['first_name'] }} {{
-                    match.selected_mentor['last_name'] }}</strong><br />
-                <strong>Mentörlük Alanı:</strong> {{ match.selected_mentor['skills']
-                }}<br />
-                <strong>Mentörlük Mesleği:</strong> {{
-                match.selected_mentor['occupation'] }}
-            </li>
-        </ul>
-        <button onclick="removeMentor({{ match.mentee.id }})">
-            Mentörü Kaldır
-        </button>
+            {% if match.selected_mentor %}
+                <h4>🎯 Seçilen Mentör:</h4>
+                <div class="mentor-card">
+                    <strong>Ad:</strong> {{ match.selected_mentor['first_name'] }} {{ match.selected_mentor['last_name'] }}<br>
+                    <strong>Mentörlük Alanı:</strong> {{ match.selected_mentor['skills'] }}<br>
+                    <strong>Mentörlük Mesleği:</strong> {{ match.selected_mentor['occupation'] }}
+                </div>
+                <button onclick="removeMentor({{ match.mentee.id }})">Mentörü Kaldır</button>
 
-        {% elif match.mentors %}
-        <strong>Önerilen Mentörler:</strong><br />
-        <ul>
-            {% for mentor_match in match.mentors %}
-            <li>
-                <strong>{{ mentor_match.mentor['first_name'] }} {{
-                    mentor_match.mentor['last_name'] }}</strong><br />
-                <strong>Mentörlük Alanı:</strong> {{ mentor_match.mentor['skills']
-                }}<br />
-                <strong>Mentörlük Mesleği:</strong> {{
-                mentor_match.mentor['occupation'] }}<br />
-                <strong>Benzerlik Puanı:</strong> {{ mentor_match.score }}
-                <br />
-                <button onclick="assignMentor({{ match.mentee.id }}, {{ mentor_match.mentor['id'] }})">
-                    Mentör Olarak Ata
-                </button>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>Uygun mentör bulunamadı.</p>
-        {% endif %}
-    </div>
-    {% endfor %} {% else %}
-    <p>Henüz eşleşme bulunmamaktadır.</p>
+            {% elif match.mentors %}
+                <h4>✨ Önerilen Mentörler:</h4>
+                {% for mentor_match in match.mentors %}
+                <div class="mentor-card">
+                    <strong>Ad:</strong> {{ mentor_match.mentor['first_name'] }} {{ mentor_match.mentor['last_name'] }}<br>
+                    <strong>Mentörlük Alanı:</strong> {{ mentor_match.mentor['skills'] }}<br>
+                    <strong>Mentörlük Mesleği:</strong> {{ mentor_match.mentor['occupation'] }}<br>
+                    <strong>Benzerlik Puanı:</strong> {{ mentor_match.score }}<br>
+                    <button onclick="assignMentor({{ match.mentee.id }}, {{ mentor_match.mentor['id'] }})">Mentör Olarak Ata</button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>Uygun mentör bulunamadı.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align: center;">Henüz eşleşme bulunmamaktadır.</p>
     {% endif %}
 
-    <p style="text-align: center">
-        <a href="/">Anasayfa</a> |
-        <a href="/list-users">Kullanıcıları Görüntüle</a>
+    <p style="text-align: center; margin-top: 30px;">
+        <a href="/">🏠 Anasayfa</a> | <a href="/list-users">👥 Kullanıcıları Görüntüle</a>
     </p>
 
+    <!-- JavaScript -->
     <script>
         function assignMentor(menteeId, mentorId) {
             fetch("/assign-mentor", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    mentee_id: menteeId,
-                    mentor_id: mentorId,
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mentee_id: menteeId, mentor_id: mentorId }),
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    location.reload();
-                })
-                .catch((error) => console.error("Hata:", error));
+            .then((response) => response.json())
+            .then(() => location.reload())
+            .catch((error) => console.error("Hata:", error));
         }
 
         function removeMentor(menteeId) {
             fetch("/remove-mentor", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    mentee_id: menteeId,
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mentee_id: menteeId }),
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    location.reload();
-                })
-                .catch((error) => console.error("Hata:", error));
+            .then((response) => response.json())
+            .then(() => location.reload())
+            .catch((error) => console.error("Hata:", error));
         }
     </script>
 </body>
-
 </html>
