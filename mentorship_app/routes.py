@@ -12,16 +12,10 @@ PROFESSION_TOPICS = {
     "Edebiyatçı": ["şiir", "roman", "yaratıcı yazarlık", "edebiyat", "editörlük"]
 }
 
-# --------------------------------------------------------------------
-# ANASAYFA
-# --------------------------------------------------------------------
 @app.route("/")
 def home_page():
     return render_template("index.html")
 
-# --------------------------------------------------------------------
-# TÜM KULLANICILARI LİSTELE (JSON)
-# --------------------------------------------------------------------
 @app.route('/users', methods=['GET'])
 def get_users():
     conn = get_db_connection()
@@ -29,8 +23,6 @@ def get_users():
     cursor.execute("SELECT * FROM users")
     rows = cursor.fetchall()
     conn.close()
-
-    # Kullanıcıları JSON formatına çeviriyoruz
     users = [
         {
             'id': row['id'],
@@ -44,9 +36,6 @@ def get_users():
     ]
     return jsonify(users)
 
-# --------------------------------------------------------------------
-# YENİ KULLANICI EKLE (JSON API)
-# --------------------------------------------------------------------
 @app.route('/users', methods=['POST'])
 def add_user():
     data = request.json
@@ -60,9 +49,6 @@ def add_user():
     conn.close()
     return jsonify({'message': 'User added successfully!'}), 201
 
-# --------------------------------------------------------------------
-# KULLANICI GÜNCELLE (JSON API)
-# --------------------------------------------------------------------
 @app.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     data = request.json
@@ -76,9 +62,6 @@ def update_user(user_id):
     conn.close()
     return jsonify({'message': 'User updated successfully!'})
 
-# --------------------------------------------------------------------
-# KULLANICI SİL (JSON API)
-# --------------------------------------------------------------------
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     conn = get_db_connection()
@@ -88,9 +71,6 @@ def delete_user(user_id):
     conn.close()
     return jsonify({'message': 'User deleted successfully!'})
 
-# --------------------------------------------------------------------
-# TÜM KULLANICILARI HTML'DE GÖSTER
-# --------------------------------------------------------------------
 @app.route("/list-users", methods=["GET"])
 def list_users_html():
     conn = get_db_connection()
@@ -98,8 +78,6 @@ def list_users_html():
     cursor.execute("SELECT * FROM users")
     rows = cursor.fetchall()
     conn.close()
-
-    # HTML için kullanıcı listesini gönderiyoruz
     users = [
         {
             'id': row['id'],
@@ -113,14 +91,11 @@ def list_users_html():
     ]
     return render_template("list_users.html", users=users)
 
-# --------------------------------------------------------------------
-# KULLANICI EKLEME FORMU (HTML)
-# --------------------------------------------------------------------
 @app.route("/add-user-form", methods=["GET"])
 def add_user_form():
     return render_template("add_user_form.html")
 
-# HTML formdan kullanıcı ekleme işlemi
+# ✅ GÜNCELLENEN BÖLÜM BURASI:
 @app.route("/submit-user", methods=["POST"])
 def submit_user():
     first_name = request.form.get("first_name")
@@ -139,11 +114,9 @@ def submit_user():
     conn.commit()
     conn.close()
 
-    return "Kullanıcı başarıyla eklendi! <a href='/list-users'>Listele</a>"
+    # Eski sade metin yerine tasarımlı HTML sayfası dönüyoruz
+    return render_template("user_added.html", first_name=first_name)
 
-# --------------------------------------------------------------------
-# KULLANICI DÜZENLEME FORMU (HTML)
-# --------------------------------------------------------------------
 @app.route("/edit-user/<int:user_id>", methods=["GET"])
 def edit_user_form(user_id):
     conn = get_db_connection()
@@ -151,12 +124,10 @@ def edit_user_form(user_id):
     cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
     row = cursor.fetchone()
     conn.close()
-
     if row is None:
         return "Kullanıcı bulunamadı!", 404
     return render_template("edit_user.html", user=row)
 
-# Güncellemeyi işleyen rota
 @app.route("/edit-user/<int:user_id>", methods=["POST"])
 def edit_user_submit(user_id):
     first_name = request.form.get("first_name")
@@ -173,15 +144,10 @@ def edit_user_submit(user_id):
         SET first_name=?, last_name=?, email=?, occupation=?, skills=?, role=?
         WHERE id=?
     """, (first_name, last_name, email, occupation, skills, role, user_id))
-
     conn.commit()
     conn.close()
-
     return "Kullanıcı başarıyla güncellendi! <a href='/list-users'>Listeye dön</a>"
 
-# --------------------------------------------------------------------
-# MENTÖR-MENTEE EŞLEŞME ROTASI
-# --------------------------------------------------------------------
 @app.route("/match-users", methods=["GET"])
 def match_users():
     conn = get_db_connection()
@@ -204,16 +170,12 @@ def match_users():
 
         for mentor in mentors:
             score = 0
-
             mentor_skills = set(map(str.strip, mentor['skills'].lower().split(',')))
             mentor_profession_topics = set(map(str.lower, PROFESSION_TOPICS.get(mentor['occupation'], [])))
 
-            # 1. Uzmanlık (skills) puanı: her eşleşme 3 puan
             for interest in mentee_interests:
                 if interest in mentor_skills:
                     score += expertise_score
-
-            # 2. Mesleki başlıklar puanı: sadece 1 kez +1 puan
             if mentee_interests & mentor_profession_topics:
                 score += profession_score
 
@@ -226,7 +188,6 @@ def match_users():
         mentor_scores.sort(key=lambda x: x['score'], reverse=True)
         top_matches = mentor_scores[:3]
 
-        # Seçilen mentör varsa, onun bilgilerini bul
         selected_mentor = None
         if mentee['selectedMentId']:
             selected_mentor = next((m for m in mentors if m['id'] == mentee['selectedMentId']), None)
@@ -241,9 +202,6 @@ def match_users():
     conn.close()
     return render_template("match_results.html", matches=match_results)
 
-# --------------------------------------------------------------------
-# MENTEÖR EKLE
-# --------------------------------------------------------------------
 @app.route("/assign-mentor", methods=["POST"])
 def assign_mentor():
     data = request.json
@@ -265,9 +223,6 @@ def assign_mentor():
     finally:
         conn.close()
 
-# --------------------------------------------------------------------
-# MENTEÖR KALDIR
-# --------------------------------------------------------------------
 @app.route("/remove-mentor", methods=["POST"])
 def remove_mentor():
     data = request.json
@@ -287,10 +242,6 @@ def remove_mentor():
         return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
-    return render_template("match_results.html", matches=matches)
 
-# --------------------------------------------------------------------
-# UYGULAMA BAŞLAT
-# --------------------------------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
