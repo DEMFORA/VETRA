@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@600&display=swap');
+
+/* 🌐 Temel */
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #EDE0BC;
+    color: #333;
+}
+
+/* 🎯 Üst Yapı */
+.hero-section {
+    padding: 20px;
+    text-align: center;
+}
+
+.hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.logo-side {
+    width: 20%;
+}
+
+.hero-header {
+    width: 60%;
+}
+
+.vetra-logo {
+    width: 180px;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    transition: transform 0.3s ease;
+}
+
+.vetra-logo:hover {
+    transform: scale(1.05);
+}
+
+/* 📝 Başlık */
+.hero-title {
+    font-size: 36px;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 10px;
+    color: #2c2c2c;
+}
+
+.hero-title span {
+    color: #e6b43d;
+    font-weight: bold;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: #555;
+}
+
+/* 📦 Ana Bölüm */
+.hero-body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    margin-top: 40px;
+    padding: 0 80px;
+    flex-wrap: wrap;
+}
+
+.mentor-img {
+    width: 180px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* 📃 Metin Alanı */
+.hero-content {
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-text {
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.hero-text strong {
+    font-weight: bold;
+}
+
+.highlight {
+    color: #e6b43d;
+    font-weight: bold;
+}
+
+/* 🔘 Buton */
+.cta-button, .match-button {
+    background-color: #FDCB58;
+    color: #000;
+    font-weight: bold;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.3s ease;
+    margin-top: 20px;
+}
+
+.cta-button:hover,
+.match-button:hover {
+    background-color: #e0b949;
+}
+
+/* 📱 Mobil */
+@media (max-width: 768px) {
+    .hero-top {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .hero-header,
+    .logo-side {
+        width: 100%;
+    }
+
+    .vetra-logo {
+        width: 120px;
+    }
+
+    .hero-body {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mentor-img {
+        width: 140px;
+    }
+
+    .hero-title {
+        font-size: 28px;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+    }
+}
+
+/* 🧾 Form */
+form {
+    max-width: 500px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Open Sans', sans-serif;
+}
+
+form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #444;
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
+    box-sizing: border-box;
+}
+
+form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #FDCB58;
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #e0b949;
+}
+
+form p {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* 🔗 Sayfa Linkleri */
+p a, .page-link {
+    display: inline-block;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #2c2c2c;
+    text-decoration: none;
+}
+
+.page-link:hover {
+    color: #e6b43d;
+}
+
+/* 🧱 Kullanıcı Kartları */
+.user-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: flex-start;
+}
+
+.user-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 280px;
+    font-size: 15px;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 160px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.user-card p {
+    margin: 6px 0;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+
+.user-card button {
+    background-color: #FDCB58;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.3s;
+}
+
+.user-card button:hover {
+    background-color: #e0b949;
+}
+
+/* 🤝 Mentör Kartları */
+.mentor-card {
+    background-color: #f0f0f0;
+    padding: 16px;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.mentor-card p {
+    margin: 4px 0;
+    line-height: 1.4;
+}
+
+/* 🧩 Mentor-Mentee Grid Yapısı */
+.match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    padding: 40px;
+    justify-content: center;
+}

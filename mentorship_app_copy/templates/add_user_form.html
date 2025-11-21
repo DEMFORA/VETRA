@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Kullanıcı Ekle</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="hero-section">
+        <h1 class="hero-title">Yeni Kullanıcı Ekle</h1>
+
+        <form action="/submit-user" method="POST">
+            <label>İsim:</label>
+            <input type="text" name="first_name" required>
+
+            <label>Soyisim:</label>
+            <input type="text" name="last_name" required>
+
+            <label>Email:</label>
+            <input type="email" name="email" required novalidate>
+            <p style="color: red;">
+                Lütfen e-posta adresinizi girerken yalnızca geçerli karakterler kullanınız. 
+                Örneğin, "ı", "ğ", "ö", "ü" gibi Türkçe karakterler e-posta adresinde kullanılamaz.
+            </p>
+
+            <label>Meslek/Pozisyon:</label>
+            <input type="text" name="occupation" required>
+
+            <label>Rol:</label>
+            <select name="role" id="roleSelect" onchange="toggleSkillsLabel()" required>
+                <option value="mentor">Mentor</option>
+                <option value="mentee">Mentee</option>
+            </select>
+
+            <label id="skillsLabel">Uzmanlık Alanı:</label>
+            <input type="text" name="skills" id="skillsInput" placeholder="örn: Python, Veri Bilimi" required>
+
+            <button type="submit">Ekle</button>
+        </form>
+
+        <p><a href="/">⬅ Anasayfa</a></p>
+    </div>
+
+    <script>
+        function toggleSkillsLabel() {
+            const role = document.getElementById("roleSelect").value;
+            const label = document.getElementById("skillsLabel");
+            const input = document.getElementById("skillsInput");
+
+            if (role === "mentor") {
+                label.innerText = "Uzmanlık Alanı:";
+                input.placeholder = "örn: Python, Veri Bilimi";
+            } else {
+                label.innerText = "Deneyim Almak İstediği Alan:";
+                input.placeholder = "örn: Web Geliştirme, Veri Analizi";
+            }
+        }
+
+        window.onload = toggleSkillsLabel;
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Güncelle</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@600&display=swap" rel="stylesheet">
+
+    <!-- CSS Dosyası -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Rol seçimine göre "skills" alanının etiketini değiştiren JS -->
+    <script>
+        function toggleSkillLabel() {
+            const role = document.getElementById("role").value;
+            const label = document.getElementById("skills-label");
+
+            if (role === "mentor") {
+                label.textContent = "Uzmanlık Alanı:";
+            } else {
+                label.textContent = "Deneyim Almak İstediği Alan:";
+            }
+        }
+
+        window.onload = toggleSkillLabel;
+    </script>
+</head>
+<body>
+
+    <h1>Kullanıcı Bilgilerini Güncelle</h1>
+
+    <!-- 🔧 KUTULU GÖRÜNÜM (form-container) -->
+    <div class="form-container">
+        <form action="/edit-user/{{ user.id }}" method="POST">
+            <!-- İsim -->
+            <label>İsim:</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}" required>
+
+            <!-- Soyisim -->
+            <label>Soy İsim:</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" required>
+
+            <!-- E-posta -->
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ user.email }}" required>
+
+            <!-- Meslek -->
+            <label>Meslek/Pozisyon:</label>
+            <input type="text" name="occupation" value="{{ user.occupation }}" required>
+
+            <!-- Rol bazlı alan etiketi -->
+            <label id="skills-label">
+                {% if user.role == 'mentor' %}
+                    Uzmanlık Alanı:
+                {% else %}
+                    Deneyim Almak İstediği Alan:
+                {% endif %}
+            </label>
+            <input type="text" name="skills" value="{{ user.skills }}" required>
+
+            <!-- Rol Seçimi -->
+            <label>Rol:</label>
+            <select name="role" id="role" onchange="toggleSkillLabel()" required>
+                <option value="mentor" {% if user.role == 'mentor' %}selected{% endif %}>Mentor</option>
+                <option value="mentee" {% if user.role == 'mentee' %}selected{% endif %}>Mentee</option>
+            </select>
+
+            <!-- Gönder Butonu -->
+            <button type="submit">Bilgileri Güncelle</button>
+        </form>
+    </div>
+
+    <!-- Navigasyon -->
+    <p style="text-align: center;"><a href="/list-users">⬅️ Listeye Dön</a></p>
+
+</body>
+</html>

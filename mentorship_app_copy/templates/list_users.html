@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Listesi</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="hero-section">
+        <h1 class="hero-title">Kullanıcı Listesi</h1>
+
+        <!-- 🔹 MENTÖRLER -->
+        <h2 style="text-align: center; margin-top: 40px;">Mentörler</h2>
+        {% if users|selectattr('role', 'equalto', 'mentor')|list %}
+        <div class="user-list">
+            {% for user in users if user.role == 'mentor' %}
+            <div class="user-card">
+                <p><strong>ID:</strong> {{ user.id }}</p>
+                <p><strong>Ad:</strong> {{ user.first_name }}</p>
+                <p><strong>Soyad:</strong> {{ user.last_name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Meslek:</strong> {{ user.occupation }}</p>
+                <p><strong>Mentörlük Alanı:</strong> {{ user.skills }}</p>
+
+                <div class="action-buttons">
+                    <button onclick="deleteUser({{ user.id }})">Sil</button>
+                    <a href="/edit-user/{{ user.id }}"><button>Güncelle</button></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="text-align: center;">Henüz kayıtlı mentör bulunmamaktadır.</p>
+        {% endif %}
+
+        <!-- 🔸 MENTEELER -->
+        <h2 style="text-align: center; margin-top: 40px;">Menteeler</h2>
+        {% if users|selectattr('role', 'equalto', 'mentee')|list %}
+        <div class="user-list">
+            {% for user in users if user.role == 'mentee' %}
+            <div class="user-card">
+                <p><strong>ID:</strong> {{ user.id }}</p>
+                <p><strong>Ad:</strong> {{ user.first_name }}</p>
+                <p><strong>Soyad:</strong> {{ user.last_name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Meslek:</strong> {{ user.occupation }}</p>
+                <p><strong>Deneyim Almak İstediği Alan:</strong> {{ user.skills }}</p>
+
+                <div class="action-buttons">
+                    <button onclick="deleteUser({{ user.id }})">Sil</button>
+                    <a href="/edit-user/{{ user.id }}"><button>Güncelle</button></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="text-align: center;">Henüz kayıtlı mentee bulunmamaktadır.</p>
+        {% endif %}
+
+        <!-- 🔗 Sayfa Geçiş Linkleri -->
+        <p style="text-align: center; margin-top: 30px;">
+            <a href="/" class="page-link">⬅️ Anasayfa</a> |
+            <a href="/add-user-form" class="page-link">+ Yeni Kullanıcı Ekle</a> |
+            <a href="/match-users" class="match-button">🔍 Eşleşmeleri Gör</a>
+        </p>
+    </div>
+
+    <!-- ❌ Silme İşlemi -->
+    <script>
+        function deleteUser(userId) {
+            fetch(`/users/${userId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
+            })
+            .catch(err => console.error(err));
+        }
+    </script>
+
+</body>
+</html>
